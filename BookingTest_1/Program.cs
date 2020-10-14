@@ -10,18 +10,14 @@ namespace BookingTest_1
     {
         static void Main(string[] args)
         {
-            DateTime Book1Start = new DateTime(2020,10,14);
-            DateTime Book1End = new DateTime(2020, 10, 24);
-
-            DateTime Book2Start = new DateTime(2020, 10, 25);
-            DateTime Book2End = new DateTime(2020, 10, 26);
-
-            if((Book2Start.Date >= Book1Start.Date && Book2Start.Date < Book1End.Date) || (Book2End.Date > Book1Start.Date && Book2End.Date < Book1End.Date) || (Book2Start.Date < Book1Start.Date && Book2End.Date >= Book1End.Date)) 
+            ConsoleKey Valg;
+            WriteInfo WriInf = new WriteInfo();
+            do
             {
-                Console.WriteLine("Booking ikke tilgængelig");
-            }
-            else Console.WriteLine("Booking tilgængelig.");
-            Console.ReadKey();
+                WriInf.MakeBooking();
+                Console.WriteLine("Prøv igen.");
+                Valg = Console.ReadKey(true).Key;
+            } while (Valg != ConsoleKey.Escape);
         }
     }
 }
