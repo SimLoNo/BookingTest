@@ -12,6 +12,8 @@ namespace BookingTest_1
         {
             ConsoleKey Valg;
             WriteInfo WriInf = new WriteInfo();
+            SQLCommands SqlCmd = new SQLCommands();
+            SqlCmd.CheckConnection();
             do
             {
                 WriInf.MakeBooking();

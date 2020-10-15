@@ -8,53 +8,78 @@ using System.Data.SqlClient;
 namespace BookingTest_1
 {
     class SQLCommands
-    {
+    {//Opretter variabler til connectionstring og tider for checkin og checkud----------------------------
+        public string CheckInTime = " 15:00";
+        public string CheckOutTime = " 11:00";
         public string ConString = "Data Source=.;Initial Catalog=BookingApp;Integrated Security=True";
-
+        //-------------------------------------------------------------------------------------------------
+        //Metode til at teste forbindelse------------------------------------------------------------------
         public bool CheckConnection() 
         { using (SqlConnection Con = new SqlConnection(ConString))
             {
                 try 
                 { Con.Open();
+                    Console.WriteLine("Connection!");
                     return true;
                 }
                 catch (Exception)  {return false; }
             }
         }
-        public void MakeBooking(Booking NewBooking) 
+        //-------------------------------------------------------------------------------------------------
+        //Metode til at lave en booking hos hotellet-------------------------------------------------------
+        public void MakeBooking(Booking Bk) 
         {
             using (SqlConnection Con = new SqlConnection(ConString)) 
             {
-                DateTime D1 = NewBooking.BookingStart;
-                DateTime D2 = NewBooking.BookingEnd;
                 try 
                 {
-
-                   // NewBooking.BookingStart = Convert.ToDateTime("2020/10/20");
-                   // NewBooking.BookingEnd = Convert.ToDateTime("2020/10/22");
-                    Console.WriteLine(NewBooking.BookingStart);
-                    Console.WriteLine(NewBooking.BookingEnd);
                     Con.Open();
                     InfoCheck InfChk = new InfoCheck();
                     bool AlreadyBooked = false;
+                    //Opretter Sql kommandoer til brug i koden------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                     SqlCommand CheckAvailable = new SqlCommand("SELECT BookingDateStart, BookingDateEnd FROM BookingTable", Con);
-                   // SqlCommand InsertBooking = new SqlCommand("INSERT INTO BookingTable VALUES ('" + NewBooking.BookingStart.Date + "','" + NewBooking.BookingEnd.Date + "')", Con);
-                    SqlCommand InsertBooking = new SqlCommand("dbo.Dates '"+NewBooking.BookingStart+"' , '"+NewBooking.BookingEnd+"'", Con);
-                    //SqlCommand InsertBooking = new SqlCommand("INSERT INTO BookingTable VALUES ('"+D1+"','"+D2+"')", Con);
-                    //SqlCommand InsertBooking = new SqlCommand("INSERT INTO BookingTable VALUES ('"+D3+"','"+D4+"')", Con);
+                    SqlCommand InsertBooking = new SqlCommand("INSERT INTO BookingTable(BookingDateStart, BookingDateEnd) VALUES ('" + Bk.BookingStart.ToString("MM-dd-yyyy") + CheckInTime+ "','" + Bk.BookingEnd.ToString("MM-dd-yyyy")+CheckOutTime + "')", Con);
+                    //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
                     SqlDataReader ReaderBookings = CheckAvailable.ExecuteReader();
                     while (ReaderBookings.Read()) 
                     {
+                        //Tjekker om der allerede er bookinger i den oenskede tidsperiode-------------------------------------------------------------------------
                         DateTime OldBookingStart = ReaderBookings.GetDateTime(0);
                         DateTime OldBookingEnd = ReaderBookings.GetDateTime(1);
-                        if (InfChk.DateCheck(OldBookingStart, OldBookingEnd, NewBooking.BookingStart, NewBooking.BookingEnd) == true) AlreadyBooked = true;
-                        
+                        if (InfChk.DateCheck(OldBookingStart, OldBookingEnd, Bk.BookingStart, Bk.BookingEnd) == true) AlreadyBooked = true;
+                        //----------------------------------------------------------------------------------------------------------------------------------------
+
                     }
-                    ReaderBookings.Close();
-                    if (AlreadyBooked == false) InsertBooking.ExecuteNonQuery();
+                    ReaderBookings.Close(); //Lukker forbindelsen der tjekker databasen
+                    //Hvis der ikke er fundet nogle krydsende datoer i databasen, bliver bookingen lavet, eller bliver brugeren oplyst om at booking ikke er muligt----
+                    if (AlreadyBooked == false) 
+                    {
+                        Console.WriteLine("Booking tilgængelig.");
+                        InsertBooking.ExecuteNonQuery(); }
                     else Console.WriteLine("Der er desværre ikke plads i denne tidsperiode.");
-                }catch(Exception Ex) { Console.WriteLine(Ex.Message); }
+                    //-------------------------------------------------------------------------------------------------------------------------------------------------
+                }
+                catch (Exception Ex) { Console.WriteLine(Ex.Message); }
             }
         }
+        //-------------------------------------------------------------------------------------------------
+        //Metode til at teste loesninger til problemer i andre metoder-------------------------------------
+        public void InsertCheck(Booking Bk) 
+        {
+            using (SqlConnection Con = new SqlConnection(ConString)) 
+            {
+                try
+                {
+                    string D1 = Bk.BookingStart.ToString();
+                    string D2 = Bk.BookingEnd.ToString();
+                    Con.Open();
+                    SqlCommand Cmd = new SqlCommand("INSERT INTO BookingTable(BookingDateStart, BookingDateEnd) VALUES ('"+Bk.BookingStart.ToString("MM-dd-yyyy")+"','"+Bk.BookingEnd.ToString("MM-dd-yyyy") +"')",Con);
+                    Cmd.ExecuteNonQuery();
+                    Console.WriteLine("Appers to have done it.");
+                }
+                catch (Exception Ex) { Console.WriteLine(Ex.Message); }
+            }
+        }
+        //-------------------------------------------------------------------------------------------------
     }
 }

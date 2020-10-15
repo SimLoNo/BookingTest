@@ -15,7 +15,9 @@ namespace BookingTest_1
             get { return bookingId; }
             set { bookingId = value; }
         }
-        private DateTime bookingStart;
+        public DateTime BookingStart { get; set; }
+        public DateTime BookingEnd { get; set; }
+        /*private DateTime bookingStart;
 
         public DateTime BookingStart
         {
@@ -28,7 +30,7 @@ namespace BookingTest_1
         {
             get { return bookingEnd; }
             set { bookingEnd = value; }
-        }
+        }*/
         private List<BookingPart> bookingItem;
 
         public List<BookingPart> BookingItem
@@ -36,16 +38,16 @@ namespace BookingTest_1
             get { return bookingItem; }
             set { bookingItem = value; }
         }
-        public Booking(DateTime BookingStart, DateTime BookingEnd) 
+        public Booking(DateTime BkSt, DateTime BkNd) 
         {
-            bookingStart = BookingStart;
-            bookingEnd = BookingEnd;
+            BookingStart = BkSt;
+            BookingEnd = BkNd;
         }
-        public Booking(DateTime BookingStart, DateTime BookingEnd, List<BookingPart> BookingItem) 
+        public Booking(DateTime BkSt, DateTime BkNd, List<BookingPart> BkIm) 
         {
-            bookingStart = BookingStart.Date;
-            bookingEnd = BookingEnd.Date;
-            bookingItem = BookingItem;
+            BookingStart = BkSt;
+            BookingEnd = BkNd;
+            bookingItem = BkIm;
         }
 
 
