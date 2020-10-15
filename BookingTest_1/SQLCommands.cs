@@ -62,6 +62,29 @@ namespace BookingTest_1
                 catch (Exception Ex) { Console.WriteLine(Ex.Message); }
             }
         }
+        public Booking FindBooking(Booking Bk) 
+        {
+            Booking FndBk = new Booking();   
+            using(SqlConnection Con = new SqlConnection(ConString)) 
+            {
+                try 
+                {
+                    List<BookingPart> BkPList = new List<BookingPart>();
+                    Con.Open();
+                    SqlCommand SelectBooking = new SqlCommand("SELECT * FROM BookingTable WHERE BookingDateStart ='" + Bk.BookingStart.ToString("MM-dd-yyyy")+CheckInTime + "' AND BookingDateEnd='" + Bk.BookingEnd.ToString("MM-dd-yyyy")+CheckOutTime+"'", Con);
+                    SqlDataReader Reader = SelectBooking.ExecuteReader();
+                    while (Reader.Read()) 
+                    {
+                        FndBk.BookingId = Reader.GetInt32(0);
+                        FndBk.BookingStart = Reader.GetDateTime(1);
+                        FndBk.BookingEnd = Reader.GetDateTime(2);
+                    }
+                }
+                catch (Exception Ex) { Console.WriteLine(Ex.Message," !FindBooking!"); }
+                return FndBk;
+            }
+        
+        }
         //-------------------------------------------------------------------------------------------------
         //Metode til at teste loesninger til problemer i andre metoder-------------------------------------
         public void InsertCheck(Booking Bk) 

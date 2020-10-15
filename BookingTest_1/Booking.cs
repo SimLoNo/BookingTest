@@ -38,6 +38,7 @@ namespace BookingTest_1
             get { return bookingItem; }
             set { bookingItem = value; }
         }
+        public Booking() { }
         public Booking(DateTime BkSt, DateTime BkNd) 
         {
             BookingStart = BkSt;

@@ -16,6 +16,7 @@ namespace BookingTest_1
             SqlCmd.CheckConnection();
             do
             {
+                WriInf.FindBooking();
                 WriInf.MakeBooking();
                 Console.WriteLine("Prøv igen.");
                 Valg = Console.ReadKey(true).Key;

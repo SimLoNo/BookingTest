@@ -44,20 +44,28 @@ namespace BookingTest_1
             catch (Exception Ex) { Console.WriteLine(Ex.Message); return DateTime.MinValue; } // Hvis der ikke kan konverteres, bliver minimum vaerdi returneret
             //----------------------------------------------------------------------------------
         }
-        //-------------------------------------------------------------------------------------------------
-        //public DateTime SelectEndDate() 
-        //{
-        //    Console.WriteLine("Indtast venligst den ønskede slutdato, og tryk enter.");
-        //    DateTime EndDate;
-        //    string DateInput;
-        //    DateInput = Console.ReadLine();
-        //    try
-        //    {
-        //        EndDate = Convert.ToDateTime(DateInput);
-        //        return EndDate;
-        //    }
-        //    catch (Exception Ex) { Console.WriteLine(Ex.Message); return DateTime.MinValue; }
-        //}
+        public void FindBooking() 
+        {
+            SQLCommands SqlCmd = new SQLCommands();
+            Booking FndBk;
+            string BeskedSlutDato = "slutdato"; //String til at give metoden for at vaelge dato tekst
+            string BeskedStartDato = "startdato"; //String til at give metoden for at vaelge dato tekst
+            //-----------------------------------------------------------
+            DateTime StartDate = SelectDate(BeskedStartDato); //Brugeren vaelger startdato for opholdet
+            DateTime EndDate = SelectDate(BeskedSlutDato); //Brugeren vaelger slutdato for opholdet
+            //Tjekker om der er gyldige datoer i variablerne, ved at tjekke om der er blevet returneret minimumsvaerdi fra SelectDate metoden---------------------
+            if (DateValidCheck(StartDate, EndDate))
+            {
+                Booking Bk = new Booking(StartDate, EndDate);
+                FndBk=SqlCmd.FindBooking(Bk); // Ret til ny Sql metode
+                if(FndBk.BookingId >= 1) Console.WriteLine($"Booking fundet: Id: {FndBk.BookingId}. Check-in: {FndBk.BookingStart}. Checkud: {FndBk.BookingEnd}.");
+
+                else Console.WriteLine("Vi kunne ikke finde din booking.");
+            }
+            else { Console.WriteLine("En eller flere dato'er er ikke gyldige."); }
+            //----------------------------------------------------------------------------------------------------------------------------------------------------
+            
+        }
         //Metode der tjekker om der er minumum value i en af de indtastede datoer. Returnere true hvis datoerne er gyldige---------------------
         public bool DateValidCheck(DateTime StartDate, DateTime EndDate) 
         { 
